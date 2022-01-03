@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leehyun.sns.post.dao.map.CommentMap">
+
+   <select id ="getComments" resultMap="commentMap">
+      select * from comments
+      order by comment_time
+   </select>
+	
+   <select id ="getComment" resultMap="commentMap">
+      select * from comments
+      where comment_num =#{commentNum}
+   </select>
+   
+   <insert id="addComment" parameterType="comment">
+      insert into comments
+      values(comment_num_seq.nextval, #{postNum}, #{userNum}, #{commentContent}, sysdate)
+   </insert>
+	
+   <delete id="delComment" parameterType="int">
+   		delete from comments where comment_num = #{commentNum}
+   </delete>
+   <resultMap id ="commentMap" type="comment">
+      <id     property="commentNum"   column="comment_num"/>
+      <result property="postNum"   column="post_num"/>
+      <result property="userNum"   column="user_num"/>
+      <result property="commentContent"   column="comment_content"/>
+      <result property="commentTime" column="comment_time"/>
+   </resultMap>
+   
+   <resultMap id ="userMap" type="user">
+      <id      property="userNum"   column="user_num"/>
+      <result property="userId"    column="user_id"/>
+      <result property="password"   column="user_pw"/>
+      <result property="email"   column="user_email"/>
+      <result property="userName" column="user_name"/>
+      <result property="birthday" column="user_birthday"/>
+      <result property="phoneNum" column="user_phone"/>
+      <result property="gender"   column="user_gender"/>
+      <result property="profileImg"   column="user_img"/>
+      <result property="regDate" column="user_regdate"/>
+      <result property="penaltyDate" column="user_penalty_date"/>
+   </resultMap>
+</mapper>

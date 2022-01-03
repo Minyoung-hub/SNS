@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leehyun.sns.message.dao.map.ChattingMap">
+
+	<select id="getChatting" parameterType="int" resultMap="chattingMap">
+		select *
+		from CHATTINGS
+		where HOST_USER_NUM = #{userNum} OR GUEST_USER_NUM = #{userNum}
+	</select>
+	
+	<select id="getChattingWithNum" parameterType="int" resultMap="chattingMap">
+		select *
+		from CHATTINGS
+		where chat_num = #{chatNum}
+	</select>
+	
+	<select id="getChattingWithNum2" parameterType="hashmap" resultMap="chattingMap">
+		select *
+		from CHATTINGS
+		where (HOST_USER_NUM = #{userNum1} AND GUEST_USER_NUM = #{userNum2})
+			OR (HOST_USER_NUM = #{userNum2} AND GUEST_USER_NUM = #{userNum1})
+	</select>
+
+	<insert id="addChatting" parameterType="hashmap">
+		insert into CHATTINGS
+		values(CHAT_NUM_SEQ.NEXTVAL, #{hostUserNum}, #{guestUserNum})
+	</insert>
+
+	<resultMap id="chattingMap" type="chatting">
+		<id property="chatNum" column="chat_num" />
+		<result property="hostUserNum" column="host_user_num" />
+		<result property="guestUserNum" column="guest_user_num" />
+	</resultMap>
+</mapper>

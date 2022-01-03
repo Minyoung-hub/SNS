@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leehyun.sns.user.dao.map.UserMap">
+
+   <select id="getUsers" resultMap="userMap">
+      select user_num, user_id, user_pw, user_email, user_name, user_birthday, user_phone, user_gender, user_img, user_regdate, user_penalty_date
+      from users order by user_num
+   </select>
+   
+   <select id="searchUsers" parameterType="String" resultMap="userMap">
+      select user_num, user_id, user_pw, user_email, user_name, user_birthday, user_phone, user_gender, user_img, user_regdate, user_penalty_date
+      from users 
+      where user_name like '%'||#{partUserName}||'%'
+      order by user_num
+   </select>
+   
+   <select id="getUser" parameterType="String" resultMap="userMap">
+      select user_num, user_id, user_pw, user_email, user_name, user_birthday, user_phone, user_gender, user_img, user_regdate, user_penalty_date
+      from users where user_name=#{userName}
+   </select>
+   
+     <select id="getUserWithId" parameterType="String" resultMap="userMap">
+      select user_num, user_id, user_pw, user_email, user_name, user_birthday, user_phone, user_gender, user_img, user_regdate, user_penalty_date
+      from users where user_id=#{userId}
+   </select>
+   
+   <select id="getUserWithNum" parameterType="int" resultMap="userMap">
+      select user_num, user_id, user_pw, user_email, user_name, user_birthday, user_phone, user_gender, user_img, user_regdate, user_penalty_date
+      from users where user_num=#{userNum}
+   </select>
+   
+      <select id="getUserList" parameterType="String" resultMap="userMap">
+      select user_num, user_id, user_pw, user_email, user_name, user_birthday, user_phone, user_gender, user_img, user_regdate, user_penalty_date
+      from users where user_name=#{userName}
+   </select>
+   
+   <select id="pwUser" parameterType="string" resultMap="userMap">
+	select user_num, user_id, user_pw, user_email, user_name, user_birthday,
+	user_phone, user_gender, user_img, user_regdate, user_penalty_date
+	from users where user_id=#{userId}
+   </select>
+   
+   <select id="loginChk" parameterType="string" resultMap="userMap">
+   	select * from users
+   	where user_id=#{userId}
+   </select> 
+   
+   <insert id="addUser" parameterType='user'>
+      insert into users(user_num, user_id, user_pw, user_email, user_name, user_birthday, user_phone, user_gender, user_img, user_regdate, user_penalty_date)
+      values(user_num_seq.nextval,#{userId}, #{password}, #{email}, #{userName}, #{birthday}, #{phoneNum}, #{gender}, 'profile.jpg', sysdate, null)
+   </insert>
+   
+   <update id="updateUser" parameterType='user'>
+      update users set user_pw =#{password}, user_email=#{email}, user_name=#{userName}, user_birthday=#{birthday},
+      user_phone=#{phoneNum}, user_img=#{profileImg}, user_regdate=#{regDate}, user_gender=#{gender}
+      where user_num=#{userNum}
+   </update>
+   
+   <update id="adminUpdateUser" parameterType="user">
+	  update users set user_name=#{userName}, user_pw=#{password}, user_phone=#{phoneNum}, user_email=#{email}
+	  where user_num=#{userNum}
+   </update>
+   
+   <update id="updatePenaltyDate" parameterType="user">
+      update users set user_penalty_date=#{penaltyDate}
+      where user_num=#{userNum}
+   </update>
+   
+   <update id="updatePenaltyDate2" parameterType="int">
+  	  update users set user_penalty_date=(user_penalty_date + 30)
+      where user_num=#{userNum}
+   </update>
+
+   <update id="pwChk" parameterType='Hashmap'>
+      update users set user_pw =#{password}
+      where user_id=#{userId}
+   </update>
+	
+   <delete id="delUser" parameterType="int">
+      delete users where user_num=#{userNum}
+   </delete>
+      
+   <resultMap id ="userMap" type="user">
+      <id      property="userNum"   column="user_num"/>
+      <result property="userId"    column="user_id"/>
+      <result property="password"   column="user_pw"/>
+      <result property="email"   column="user_email"/>
+      <result property="userName" column="user_name"/>
+      <result property="birthday" column="user_birthday"/>
+      <result property="phoneNum" column="user_phone"/>
+      <result property="gender"   column="user_gender"/>
+      <result property="profileImg"   column="user_img"/>
+      <result property="regDate" column="user_regdate"/>
+      <result property="penaltyDate" column="user_penalty_date"/>
+   </resultMap>
+</mapper>

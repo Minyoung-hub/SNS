@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE configuration PUBLIC '-//mybatis.org/DTD Config 3.0//EN'
+	'http://mybatis.org/dtd/mybatis-3-config.dtd'>
+<configuration>
+	<typeAliases>
+		<package name = "leehyun.sns.user.domain"/>
+		<package name = "leehyun.sns.message.domain"/>
+		<package name = "leehyun.sns.post.domain"/>
+		<package name = "leehyun.sns.common.domain"/>
+	</typeAliases>
+</configuration>

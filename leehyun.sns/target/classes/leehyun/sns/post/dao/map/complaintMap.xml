@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leehyun.sns.post.dao.map.ComplaintMap">
+	<select id="getComplaints" resultType="complaint">
+		select post_num postNum, max(complaint_type) complaintType, count(post_num) complaintCnt, min(post_complaint_date) postComplaintDate
+		from complaints
+		group by post_num
+		order by min(post_complaint_date)
+	</select>
+	
+	<select id="getComplaint" parameterType="complaint" resultMap="complaintMap">
+		select *
+		from complaints
+		where post_num = #{postNum} and user_num = #{userNum}
+	</select>
+	
+	<select id="getComplaintTypes" resultType="complaint">
+		SELECT
+        	post_num postNum,
+        	complaint_type complaintType,
+        	COUNT(complaint_type) complaintCnt
+    	FROM
+        	complaints
+    	GROUP BY
+        	post_num,
+        	complaint_type
+    	ORDER BY 1, 3 desc
+	</select>
+	
+	<delete id="delComplaint" parameterType="int">
+		delete complaints where post_num=#{postNum}
+	</delete>
+	
+	<insert id="addComplaint" parameterType="complaint">
+		insert into complaints(complaint_num, post_num, user_num, post_complaint_date, complaint_type)
+		values(complaint_num_seq.nextval,#{postNum}, #{userNum}, sysdate, #{complaintType})
+	</insert>
+	
+	<resultMap id="complaintMap" type="complaint">
+		<id property="complaintNum" column="complaint_num"/>
+		<result property="postNum" column="post_num"/>
+		<result property="userNum" column="user_num"/>
+		<result property="postComplaintDate" column="post_complaint_date"/>
+		<result property="complaintType" column="complaintType"/>
+	</resultMap>
+</mapper>

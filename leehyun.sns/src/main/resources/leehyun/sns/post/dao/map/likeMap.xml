@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leehyun.sns.post.dao.map.LikeMap">
+	<insert id="addLike" parameterType='like'>
+		insert into likes(post_num,
+		user_num, like_type, like_time)
+		values(#{postNum}, #{userNum},
+		#{likeType}, sysdate)
+	</insert>
+
+   <select id="getLike" resultType="like" parameterType="Hashmap">
+      select post_num postNum, user_num userNum, like_type likeType, like_time likeTime
+      from likes
+      where post_num = #{postNum} AND user_num = #{userNum}
+   </select>
+
+	<delete id="delLike" parameterType="Hashmap">
+		delete from likes where
+		post_num = #{postNum} AND user_num = #{userNum}
+	</delete>
+	
+	<update id="changeLike" parameterType="Hashmap">
+		update likes set
+		like_type = #{likeType}
+		where post_num = #{postNum} AND user_num = #{userNum}
+	</update>
+	
+	<select id = "getLikes" parameterType="int" resultType="like">
+		SELECT
+		    post_num postNum,
+		    (
+		        SELECT
+		            COUNT(user_num)
+		        FROM
+		            likes l1
+		        WHERE
+		            l1.post_num = l2.post_num
+		            AND like_type = 'like'
+		    ) likeCnt,
+		    (
+		        SELECT
+		            COUNT(user_num)
+		        FROM
+		            likes l1
+		        WHERE
+		            l1.post_num = l2.post_num
+		            AND like_type = 'dislike'
+		    ) disLikeCnt,
+		    (
+		        SELECT
+		            like_type
+		        FROM
+		            likes l1
+		        WHERE
+		            l1.post_num = l2.post_num
+		            AND user_num = #{userNum}
+		    ) myState
+		FROM
+    		likes l2
+	</select>
+
+ 	<resultMap id="likeMap" type="like">
+		<id property="postNum" column="post_num" />
+		<result property="userNum" column="user_num" />
+		<result property="likeType" column="like_type" />
+		<result property="likeTime" column="like_time" /> 
+	</resultMap> 
+</mapper>

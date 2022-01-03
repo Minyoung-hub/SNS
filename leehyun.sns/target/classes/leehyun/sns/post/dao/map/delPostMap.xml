@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leehyun.sns.post.dao.map.DelPostMap">
+	<update id="addDelPost" parameterType="delPost">
+		insert into del_posts(del_post_num, del_post_img, del_post_regdate, del_post_deldate, del_post_content, user_num, del_post_reason, declare_cnt)
+		values(#{delPostNum}, #{delPostImg}, #{delPostRegDate}, sysdate, #{delPostContent}, #{userNum}, #{delPostReason}, #{declareCnt})
+	</update>
+	
+	<select id="delPostCnt" parameterType="int" resultType="delPost">
+		select count(user_num) delPostCnt
+		from del_posts
+		where user_num = #{userNum}
+	</select>
+	
+	<select id="recentDelPost" parameterType="int" resultMap="delPostMap">
+		SELECT * 
+      	FROM(
+          SELECT 
+              * 
+          FROM del_posts
+          where user_num = #{userNum}
+          ORDER BY del_post_deldate desc)
+      	WHERE ROWNUM = 1
+	</select>
+		
+	<resultMap id="delPostMap" type="delPost">
+		<id property="delPostNum" column="del_post_num"/>
+		<result property="delPostImg" column="del_post_img"/>
+		<result property="delPostRegDate" column="del_post_regdate"/>
+		<result property="delPostDelDate" column="del_post_deldate"/>
+		<result property="delPostContent" column="del_post_content"/>
+		<result property="userNum" column="user_num"/>
+		<result property="delPostReason" column="del_post_reason"/>
+		<result property="declareCnt" column="declare_cnt"/>
+	</resultMap>
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leehyun.sns.post.dao.map.PostMap">
+	<select id="mainPosts" resultMap="postMap">
+		select A.*, B.user_id, B.user_img
+		from posts A  inner join users B on A.user_num = B.user_num
+		where A.user_num in 
+			(select TO_USER_NUM  
+			from FANS where FROM_USER_NUM = #{userNum}) or A.user_num= #{userNum}
+		order by post_regdate desc
+	</select>
+   
+   <select id="getPosts" resultMap="postMap">
+      select *
+      from posts 
+      where user_num = #{userNum}
+      order by post_regDate desc
+   </select>
+   
+   <select id="getFanPosts" resultMap="postMap">
+      select *
+      from posts 
+      where user_num = #{userNum}
+      order by post_regDate desc
+   </select>
+   
+   <select id="findLastPost" resultType="int">
+      select LAST_NUMBER from user_sequences
+      where sequence_name = 'POST_NUM_SEQ'
+   </select>
+   
+   <insert id="addPost" parameterType='post'>
+      insert into posts(post_num, post_img, post_regDate, post_content, user_num)
+      values(post_num_seq.nextval, #{postImg}, sysdate, #{postContent}, #{userNum})
+   </insert>
+   
+   <select id="getPost" parameterType="int" resultMap="postMap">
+      select post_num, post_img, post_regDate, post_content, user_num
+      from posts where post_num = #{postNum}
+   </select>
+   
+   <update id="updatePost" parameterType='post'>
+      update posts set post_content = #{postContent}
+      where post_num = #{postNum}
+   </update>
+   
+   <delete id="delPost" parameterType="int">
+      delete from posts where post_num = #{postNum}
+   </delete>
+   
+   <delete id="delComments" parameterType="int">
+      delete from comments where post_num = #{postNum}
+   </delete>
+   
+   <resultMap id ="postMap" type="post">
+      <id     property="postNum"   column="post_num"/>
+      <result property="postImg"   column="post_img"/>
+      <result property="regDate"   column="post_regDate"/>
+      <result property="postContent"   column="post_content"/>
+      <result property="userNum" column="user_num"/>
+      <result property="userId" column="user_id"/>
+      <result property="userImg" column="user_img"/>
+   </resultMap>
+</mapper>

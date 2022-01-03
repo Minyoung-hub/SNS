@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leehyun.sns.user.dao.map.FanMap">
+	<select id="getFans" parameterType="int" resultType="int">
+		select from_user_num
+		from fans
+		where to_user_num = #{toUserNum}
+	</select>
+	
+	<select id="getStars" parameterType="int" resultType="int">
+		select to_user_num
+		from fans
+		where from_user_num = #{fromUserNum}
+	</select>
+	
+	<insert id="addStar" parameterType='fan'>
+	   insert into fans
+	   values(fan_num_seq.nextval, #{toUserNum}, #{fromUserNum}, sysdate)
+	</insert>
+	
+	<delete id="delStar" parameterType="int">
+		delete fans where fan_num=#{fanNum}
+	</delete>
+	
+	<select id="getFanNum" parameterType="Hashmap" resultType="int">
+      select fan_num
+      from fans 
+      where to_user_num=#{toUserNum} AND from_user_num=#{fromUserNum}
+   </select>
+     
+	<resultMap id ="fanMap" type="fan">
+	   <id     property="fanNum"      column="fan_num"/>
+	   <result property="fanTime"     column="fan_time"/>
+	   <result property="toUserNum"   column="to_user_num"/>
+	   <result property="fromUserNum" column="from_user_num"/>
+	</resultMap>
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leehyun.sns.common.dao.map.CommonMap">
+	<select id="getFans" parameterType="int" resultType="notice">
+		SELECT
+		    1 type,
+		    from_user_num userNum,
+		    fan_time noticeTime,
+		    0 postNum
+		FROM
+		    fans
+		WHERE
+		    to_user_num = #{userNum}
+		ORDER BY
+		    noticeTime
+	</select>
+	
+	<select id="getLikes" parameterType="int" resultType="notice">
+		SELECT
+		    2 type,
+		    user_num userNum,
+		    like_time noticeTime,
+		    post_num postNum
+		FROM
+		    likes
+		WHERE
+		    post_num IN (
+		        SELECT
+		            post_num
+		        FROM
+		            posts
+		        WHERE
+		            user_num = #{userNum}
+		    )
+		    AND like_type = 'like'
+		    AND user_num != #{userNum}
+		ORDER BY
+		    noticeTime
+	</select>
+	
+	<select id="getComments" parameterType="int" resultType="notice">
+		SELECT
+		    3 type,
+		    user_num userNum,
+		    comment_time noticeTime,
+		    post_num postNum
+		FROM
+		    comments
+		WHERE
+		    post_num IN (
+		        SELECT
+		            post_num
+		        FROM
+		            posts
+		        WHERE
+		            user_num = #{userNum}
+		    )
+		    AND user_num != #{userNum}
+		ORDER BY
+		    noticeTime
+	</select>
+</mapper>

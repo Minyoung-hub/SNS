@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leehyun.sns.message.dao.map.MessageMap">
+
+	<select id="getMessages" parameterType="int" resultMap="messageMap">
+		select *
+		from MESSAGES
+		where CHAT_NUM = #{chatNum}
+		order by MSG_NUM
+	</select>
+	
+	<select id="getAddMessages" parameterType="hashmap" resultMap="messageMap">
+		select *
+		from MESSAGES
+		where CHAT_NUM = #{chatNum} AND MSG_NUM &gt; #{msgNum}
+		order by MSG_NUM
+	</select>
+	
+	<select id="getLastMessage" parameterType="int" resultMap="messageMap">
+		SELECT * 
+		FROM(
+		    SELECT 
+		        * 
+		    FROM MESSAGES
+		    where CHAT_NUM = #{chatNum}
+		    ORDER BY msg_time desc)
+		WHERE ROWNUM = 1
+	</select>
+	
+	<select id="getMessageCnt" parameterType="hashmap" resultType="int">
+		select count(*)
+		from MESSAGES
+		where CHAT_NUM = #{chatNum} AND SENDER != #{userNum} AND (MSG_CHECK = '0' OR MSG_CHECK = '2')
+	</select>
+	
+	<update id="readChk1" parameterType="hashmap">
+		update MESSAGES set MSG_CHECK = '1'
+		where CHAT_NUM = #{chatNum} AND SENDER != #{userNum} AND MSG_CHECK = '0'
+	</update>
+	
+	<update id="readChk2" parameterType="hashmap">
+		update MESSAGES set MSG_CHECK = '3'
+		where CHAT_NUM = #{chatNum} AND SENDER != #{userNum} AND MSG_CHECK = '2'
+	</update>
+	
+	<update id="deleteMsg11" parameterType="hashmap">
+		update MESSAGES set MSG_CHECK = '2'
+		where CHAT_NUM = #{chatNum} AND SENDER = #{userNum} AND MSG_CHECK = '0'
+	</update>
+	
+	<update id="deleteMsg12" parameterType="hashmap">
+		update MESSAGES set MSG_CHECK = '3'
+		where CHAT_NUM = #{chatNum} AND SENDER = #{userNum} AND MSG_CHECK = '1'
+	</update>
+	
+	<update id="deleteMsg13" parameterType="hashmap">
+		update MESSAGES set MSG_CHECK = '6'
+		where CHAT_NUM = #{chatNum} AND SENDER = #{userNum} AND MSG_CHECK = '0'
+	</update>
+	
+	<update id="deleteMsg14" parameterType="hashmap">
+		update MESSAGES set MSG_CHECK = '7'
+		where CHAT_NUM = #{chatNum} AND SENDER = #{userNum} AND MSG_CHECK = '1'
+	</update>
+	
+	<update id="deleteMsg21" parameterType="hashmap">
+		update MESSAGES set MSG_CHECK = '4'
+		where CHAT_NUM = #{chatNum} AND (MSG_CHECK = '2' OR MSG_CHECK = '3')
+	</update>
+	
+	<update id="deleteMsg22" parameterType="hashmap">
+		update MESSAGES set MSG_CHECK = '8'
+		where CHAT_NUM = #{chatNum} AND (MSG_CHECK = '6' OR MSG_CHECK = '7')
+	</update>
+	
+	
+
+	<insert id="addMessage" parameterType="message">
+		insert into MESSAGES
+		values(MSG_NUM_SEQ.NEXTVAL, #{chatNum}, #{msgContent}, sysdate, #{sender}, '0')
+	</insert>
+
+	<resultMap id="messageMap" type="message">
+		<id property="msgNum" column="MSG_NUM" />
+		<result property="chatNum" column="CHAT_NUM" />
+		<result property="msgContent" column="MSG_CONTENT" />
+		<result property="msgTime" column="MSG_TIME" />
+		<result property="sender" column="SENDER" />
+		<result property="msgCheck" column="MSG_CHECK" />
+	</resultMap>
+</mapper>
